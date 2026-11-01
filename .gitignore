@@ -1,0 +1,8 @@
+# ขั้นต่ำที่ต้องมีตั้งแต่ commit แรก (กัน secret/ไฟล์ใหญ่หลุดเข้า git) — จะเติมเพิ่มใน M0
+.env
+secrets/
+*.json
+.venv/
+__pycache__/
+data/
+.DS_Store
