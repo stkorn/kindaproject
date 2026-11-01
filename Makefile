@@ -9,4 +9,3 @@ lint:
 
 test:
 	poetry run pytest -v
-

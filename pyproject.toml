@@ -16,6 +16,12 @@ package-mode = false
 [tool.pytest]
 testpaths = ["tests"]
 
+[tool.ruff.lint]
+extend-select = [
+    "DTZ",  # datetime ต้องมี timezone (event time / ตัดยอดรายวันตามเวลาไทย)
+    "I",    # เรียง import ให้เหมือนกันทุกไฟล์
+]
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
@@ -23,5 +29,6 @@ build-backend = "poetry.core.masonry.api"
 [dependency-groups]
 dev = [
     "pytest (>=9.2.0,<10.0.0)",
-    "ruff (>=0.17.3,<0.18.0)"
+    "ruff (>=0.17.3,<0.18.0)",
+    "pre-commit (>=4.7.0,<5.0.0)"
 ]
