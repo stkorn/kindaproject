@@ -1,0 +1,34 @@
+[project]
+name = "kinda-data-platform"
+version = "0.1.0"
+description = "A data platform for handling kinda data"
+authors = [
+    {name = "ekstkorn"}
+]
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = [
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.pytest]
+testpaths = ["tests"]
+
+[tool.ruff.lint]
+extend-select = [
+    "DTZ",  # datetime ต้องมี timezone (event time / ตัดยอดรายวันตามเวลาไทย)
+    "I",    # เรียง import ให้เหมือนกันทุกไฟล์
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.2.0,<10.0.0)",
+    "ruff (>=0.17.3,<0.18.0)",
+    "pre-commit (>=4.7.0,<5.0.0)"
+]

@@ -1,8 +1,32 @@
-# ขั้นต่ำที่ต้องมีตั้งแต่ commit แรก (กัน secret/ไฟล์ใหญ่หลุดเข้า git) — จะเติมเพิ่มใน M0
+# --- Secrets (ชั้นแรก ดูจากชื่อ/ตำแหน่ง · ชั้นที่สองคือ pre-commit สแกนเนื้อหาไฟล์) ---
 .env
+.env.*
+!.env.example
 secrets/
-*.json
+*key*.json
+*credential*.json
+*service-account*.json
+
+# --- Python ---
 .venv/
 __pycache__/
+.pytest_cache/
+.ruff_cache/
+
+# --- Data (สร้างใหม่ได้จาก generator; Spark checkpoint ให้ชี้มาไว้ใต้ data/ ด้วย) ---
 data/
+*.duckdb
+*.duckdb.wal
+
+# --- dbt (M2) ---
+target/
+dbt_packages/
+logs/
+
+# --- Spark local mode (M4) ---
+spark-warehouse/
+metastore_db/
+derby.log
+
+# --- OS ---
 .DS_Store
