@@ -81,4 +81,9 @@ Data platform ด้านการเงินสำหรับร้านข
 - ห้าม commit `.env`, `secrets/`, service-account key
 
 ## 8. คำสั่ง
-(ผู้ใช้จะเติมส่วนนี้เองเมื่อสร้าง Makefile ใน M0 — Claude ช่วยเตือนให้อัปเดตเมื่อมีคำสั่งใหม่)
+ใช้ `make` เป็นทางเข้าหลัก (Claude ช่วยเตือนให้อัปเดตส่วนนี้เมื่อมีคำสั่งใหม่)
+- `make install` — `poetry check --lock` → `poetry sync` (ลบแพ็กเกจนอก lock) → `pre-commit install`
+- `make lint` — `ruff check .` (config อยู่ใน `pyproject.toml` `[tool.ruff.lint]`)
+- `make test` — `pytest` เฉพาะ `tests/` (`testpaths`); **exit 5 จนกว่าจะมี test แรกใน M1** (ตั้งใจไว้)
+- Spark tests อยู่ใน `streaming/tests/` รันใน container (M4) ไม่ใช่ root venv
+- pre-commit: ruff เป็น `repo: local` ใช้ตัวใน `.venv` เวอร์ชันเดียวกับ `poetry.lock`
