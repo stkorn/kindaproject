@@ -3,9 +3,9 @@
 > Claude อัปเดตไฟล์นี้ตอนจบทุก session · ผู้ใช้แก้/เติมได้เสมอ
 
 ## สถานะปัจจุบัน
-- **Milestone**: M0 — Repo foundation ✅ ผ่าน DoD (รอ merge `m0-foundation` → `main`)
-- **Branch**: `m0-foundation`
-- **ก้าวถัดไป**: merge M0 → เริ่ม M1 (business config YAML + generator)
+- **Milestone**: M1 — Business config + data generator (ยังไม่เริ่ม) · M0 ✅ merged (PR #1, `44ad4c5`)
+- **Branch**: `main` → สร้าง `m1-generator` ตอนเริ่ม
+- **ก้าวถัดไป**: คุยโครง business config (YAML) ก่อนเขียน generator
 
 ## Log
 ### 2026-11-01 — เริ่มใหม่จากศูนย์
