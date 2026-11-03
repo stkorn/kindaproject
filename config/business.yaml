@@ -21,17 +21,20 @@ cities:
 
 # closed (ไม่บังคับ): วันที่ร้านปิด = ไม่มีบิลเลยทุกช่องทาง ชนะ multiplier ทุกตัว)
 #   weekdays: [mon..sun] · dates: รูปแบบเดียวกับ date_range (type annual | dated | public_holiday) ไม่มี multiplier
+# normal_daily_bills: บิลต่อวันในวันจันทร์–ศุกร์ปกติ ก่อนคูณ day_of_week และ date_range (ช่วง 150–300)
 branches:
   - branch_id: CNX01
     branch_name: Kinda Nimman
     city_id: CNX
     franchisee_id: HQ
     channels: [walk_in, grab, lineman, shopeefood]
+    normal_daily_bills: 280
   - branch_id: CNX02
     branch_name: Kinda Santitham
     city_id: CNX
     franchisee_id: F001
     channels: [walk_in, grab, lineman]
+    normal_daily_bills: 180
     closed:
       weekdays: [sat]
       dates:
@@ -41,16 +44,19 @@ branches:
     city_id: BKK
     franchisee_id: F002
     channels: [walk_in, grab, lineman, shopeefood]
+    normal_daily_bills: 240
   - branch_id: BKK02
     branch_name: Kinda Thonglor
     city_id: BKK
     franchisee_id: F002     # เจ้าเดียวกับ BKK01
     channels: [walk_in, grab, lineman, shopeefood]
+    normal_daily_bills: 300
   - branch_id: CPN01
     branch_name: Kinda Chumphon
     city_id: CPN
     franchisee_id: F003
     channels: [walk_in, grab]
+    normal_daily_bills: 160
     closed:
       weekdays: [mon]
       dates:

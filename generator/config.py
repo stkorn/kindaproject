@@ -93,6 +93,7 @@ class Branch(StrictModel):
     city_id: str
     franchisee_id: str
     channels: list[str]
+    normal_daily_bills: Annotated[int, Field(gt=0)]  # วันปกติ ก่อนคูณตัวคูณใดๆ
     closed: Closed | None = None  # ไม่ใส่ = เปิดทุกวัน
 
 

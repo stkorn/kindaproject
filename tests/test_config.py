@@ -63,6 +63,20 @@ def test_rates_multiply_with_money():
     assert Decimal("1000.00") * f001.royalty_rate == Decimal("50.00")
 
 
+def test_real_normal_daily_bills_in_range():
+    # CLAUDE.md: ~150–300 บิล/สาขา/วัน · test ของข้อมูล ไม่ใช่ของโค้ด
+    cfg = load_config(REAL_CONFIG)
+    assert all(150 <= b.normal_daily_bills <= 300 for b in cfg.branches)
+
+
+@pytest.mark.parametrize("bad", [0, -10, 200.5])
+def test_normal_daily_bills_must_be_positive_int(raw, tmp_path, bad):
+    branch(raw, "CNX01")["normal_daily_bills"] = bad
+    with pytest.raises(ValidationError) as exc:
+        load_from(raw, tmp_path)
+    assert error_locs(exc) == [("branches", 0, "normal_daily_bills")]
+
+
 # ---------- FK: อ้างถึง id ที่ไม่มีอยู่ ----------
 
 
