@@ -1,4 +1,4 @@
-.PHONY: install lint test
+.PHONY: install lint test generate
 
 install:
 	poetry check --lock
@@ -10,3 +10,7 @@ lint:
 
 test:
 	poetry run pytest -v
+
+# 12 เดือนตาม CLAUDE.md · เขียนทับ partition เดิมได้เสมอ (idempotent)
+generate:
+	poetry run python -m generator --start 2025-11-01 --end 2026-10-31

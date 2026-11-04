@@ -8,12 +8,17 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
 dependencies = [
+    "holidays (>=0.107,<0.108)",
+    "pyyaml (>=6.0.3,<7.0.0)",
+    "pydantic (>=2.14.2,<3.0.0)",
+    "pyarrow (>=26.0.1,<27.0.0)"
 ]
 
 [tool.poetry]
 package-mode = false
 
 [tool.pytest]
+pythonpath = ["."]
 testpaths = ["tests"]
 
 [tool.ruff.lint]

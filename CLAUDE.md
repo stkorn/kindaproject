@@ -84,6 +84,7 @@ Data platform ด้านการเงินสำหรับร้านข
 ใช้ `make` เป็นทางเข้าหลัก (Claude ช่วยเตือนให้อัปเดตส่วนนี้เมื่อมีคำสั่งใหม่)
 - `make install` — `poetry check --lock` → `poetry sync` (ลบแพ็กเกจนอก lock) → `pre-commit install`
 - `make lint` — `ruff check .` (config อยู่ใน `pyproject.toml` `[tool.ruff.lint]`)
-- `make test` — `pytest` เฉพาะ `tests/` (`testpaths`); **exit 5 จนกว่าจะมี test แรกใน M1** (ตั้งใจไว้)
+- `make test` — `pytest` เฉพาะ `tests/` (`testpaths`)
+- `make generate` — สร้างบิล 12 เดือนลง `data/bronze/` (เขียนทับได้, idempotent) · ช่วงอื่นใช้ `poetry run python -m generator --start YYYY-MM-DD --end YYYY-MM-DD`
 - Spark tests อยู่ใน `streaming/tests/` รันใน container (M4) ไม่ใช่ root venv
 - pre-commit: ruff เป็น `repo: local` ใช้ตัวใน `.venv` เวอร์ชันเดียวกับ `poetry.lock`

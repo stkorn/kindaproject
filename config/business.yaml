@@ -1,0 +1,156 @@
+# Business config ของ Kinda — reference data ที่ generator และ dbt ใช้ร่วมกัน
+
+franchisees:
+  - franchisee_id: HQ
+    franchisee_name: Kinda HQ
+    royalty_rate: 0.00
+  - franchisee_id: F001
+    franchisee_name: Lanna Sweet Co., Ltd.
+    royalty_rate: 0.05
+  - franchisee_id: F002
+    franchisee_name: Bangkok Cream Co., Ltd.
+    royalty_rate: 0.05
+  - franchisee_id: F003
+    franchisee_name: Chumphon Bakery Partnership
+    royalty_rate: 0.04
+
+cities:
+  - {city_id: CNX, city_name: Chiang Mai, region: north}
+  - {city_id: BKK, city_name: Bangkok,    region: central}
+  - {city_id: CPN, city_name: Chumphon,   region: south}
+
+# closed (ไม่บังคับ): วันที่ร้านปิด = ไม่มีบิลเลยทุกช่องทาง ชนะ multiplier ทุกตัว)
+#   weekdays: [mon..sun] · dates: รูปแบบเดียวกับ date_range (type annual | dated | public_holiday) ไม่มี multiplier
+# normal_daily_bills: บิลต่อวันในวันจันทร์–ศุกร์ปกติ ก่อนคูณ day_of_week และ date_range (ช่วง 150–300)
+branches:
+  - branch_id: CNX01
+    branch_name: Kinda Nimman
+    city_id: CNX
+    franchisee_id: HQ
+    channels: [walk_in, grab, lineman, shopeefood]
+    normal_daily_bills: 280
+  - branch_id: CNX02
+    branch_name: Kinda Santitham
+    city_id: CNX
+    franchisee_id: F001
+    channels: [walk_in, grab, lineman]
+    normal_daily_bills: 180
+    closed:
+      weekdays: [sat]
+      dates:
+        - {type: annual, start: "04-13", end: "04-15"}   # ปิดสงกรานต์ทุกปี
+  - branch_id: BKK01
+    branch_name: Kinda Ari
+    city_id: BKK
+    franchisee_id: F002
+    channels: [walk_in, grab, lineman, shopeefood]
+    normal_daily_bills: 240
+  - branch_id: BKK02
+    branch_name: Kinda Thonglor
+    city_id: BKK
+    franchisee_id: F002     # เจ้าเดียวกับ BKK01
+    channels: [walk_in, grab, lineman, shopeefood]
+    normal_daily_bills: 300
+  - branch_id: CPN01
+    branch_name: Kinda Chumphon
+    city_id: CPN
+    franchisee_id: F003
+    channels: [walk_in, grab]
+    normal_daily_bills: 160
+    closed:
+      weekdays: [mon]
+      dates:
+        - {type: annual, start: "04-13", end: "04-15"}   # ปิดสงกรานต์ทุกปี
+
+# settlement.type: days_after (days: N วันหลังขาย) | weekly (weekday: mon..sun)
+channels:
+  - channel_id: walk_in
+    channel_name: Walk-in
+    gp_rate: 0.00
+    settlement: {type: days_after, days: 0}   # ได้เงินทันที
+  - channel_id: grab
+    channel_name: GrabFood
+    gp_rate: 0.30
+    settlement: {type: days_after, days: 1}
+  - channel_id: lineman
+    channel_name: LINE MAN
+    gp_rate: 0.30
+    settlement: {type: days_after, days: 1}
+  - channel_id: shopeefood
+    channel_name: ShopeeFood
+    gp_rate: 0.30
+    settlement: {type: days_after, days: 1}
+
+menu:
+  - menu_id: B001
+    menu_name: ขนมปังนมเนย
+    price_incl_vat: 27.00
+    cost: 12.00
+  - menu_id: B002
+    menu_name: ขนมปังนมฮอกไกโด
+    price_incl_vat: 27.00
+    cost: 12.00
+  - menu_id: B003
+    menu_name: ขนมปังโอวัลตินครันชี่
+    price_incl_vat: 40.00
+    cost: 20.00
+  - menu_id: B004
+    menu_name: ขนมปังครีมฝอยทอง
+    price_incl_vat: 33.00
+    cost: 15.00
+  - menu_id: B005
+    menu_name: ขนมปังเฟอเรโร่
+    price_incl_vat: 47.00
+    cost: 27.00
+  - menu_id: D001
+    menu_name: นมสดโอริโอ้
+    price_incl_vat: 50.00
+    cost: 20.00
+  - menu_id: D002
+    menu_name: ชาไทยนมสด
+    price_incl_vat: 40.00
+    cost: 20.00
+  - menu_id: D003
+    menu_name: โกโก้นมสด
+    price_incl_vat: 53.00
+    cost: 20.00
+  - menu_id: D004
+    menu_name: นมหมีปั่น
+    price_incl_vat: 50.00
+    cost: 20.00
+  - menu_id: D005
+    menu_name: โค้กปั่น
+    price_incl_vat: 40.00
+    cost: 20.00
+
+# seasonality:  ตัวคูณ (multiplier) ตามมิติที่เลือก
+seasonality:
+  day_of_week: {mon: 1.00, tue: 1.00, wed: 1.00, thu: 1.00, fri: 1.00, sat: 1.20, sun: 1.20}
+  # บิลทั้งวัน = base × day_of_week × ทุก date_range ที่วันนั้นตรง (คูณกันทั้งหมด)
+  # type:  public_holiday → วันหยุดราชการไทยจาก library holidays (คำนวณทุกปีให้เอง รวมวันชดเชย)
+  #        annual         → วันที่ตายตัวทุกปี start/end เป็น "MM-DD"
+  #        dated          → ปฏิทินธุรกิจ start/end เป็น "YYYY-MM-DD" ต้องเพิ่มของปีใหม่ทุกปี
+  # วันที่ใส่ "" เสมอ · รวมวัน start และ end · multiplier เป็นค่าประมาณ
+  # cities (ไม่บังคับ): ใช้เฉพาะสาขาในเมืองเหล่านี้ · ไม่ใส่ = ทุกสาขา
+  date_range:
+    - {type: public_holiday, range_name: public_holiday,                                           multiplier: 1.20}
+    - {type: annual,         range_name: valentine,        start: "02-14",      end: "02-14",      multiplier: 1.30}
+    - {type: annual,         range_name: term_break,       start: "04-01",      end: "05-31",      multiplier: 0.80}
+    # สงกรานต์ซ้อนกับ public_holiday ×1.20 และ term_break ×0.80 → ผลรวม BKK 0.384, CNX 1.152 (ก่อน day_of_week)
+    - {type: annual,         range_name: songkran_bkk,     start: "04-13",      end: "04-15",      multiplier: 0.40, cities: [BKK]}
+    - {type: annual,         range_name: songkran_cnx,     start: "04-13",      end: "04-15",      multiplier: 1.20, cities: [CNX]}
+    - {type: dated,          range_name: chinese_new_year, start: "2026-02-17", end: "2026-02-17", multiplier: 1.10}
+  hourly_weight:
+    10: 1.0
+    11: 1.0
+    12: 1.0
+    13: 1.0
+    14: 1.0
+    15: 1.0
+    16: 1.0
+    17: 1.0
+    18: 1.2
+    19: 1.2
+    20: 1.2
+    21: 1.2
+    22: 1.2
