@@ -1,0 +1,36 @@
+# พฤติกรรมจำลองของ generator — ใช้เฉพาะ generator ไม่ใช่ข้อเท็จจริงทางธุรกิจ (ADR-004)
+# ข้อเท็จจริง (สาขา เมนู ราคา GP) อยู่ใน business.yaml · ไฟล์นี้ตอบว่า "ลูกค้าซื้ออย่างไร"
+# weight ทุกตัวเป็นสัดส่วน ไม่ต้องรวมเป็น 1 (random.choices ปรับให้เอง)
+
+# seed เดียวทั้งโปรแกรม แต่ละ (branch_id, date) ได้ RNG ของตัวเอง → เพิ่มสาขา/วันแล้ววันเดิมไม่เปลี่ยน
+seed: 20251101
+
+# ทุก channel_id ใน business.yaml ต้องมีที่นี่
+# weight: สัดส่วนบิลต่อช่องทาง สาขาที่ไม่มีบางช่องทางจะเฉลี่ยใหม่จากช่องทางที่มี
+#   (CPN01 มี walk_in + grab → 0.60 : 0.20 = 75% : 25%)
+# ref_prefix: คำนำหน้าเลขออเดอร์ของ platform · null = ไม่มีเลข platform (walk_in)
+# cancel_by_customer / cancel_by_branch: ความน่าจะเป็นต่อบิล ที่เหลือคือ completed
+channels:
+  walk_in:    {weight: 0.60, ref_prefix: null, cancel_by_customer: 0.000, cancel_by_branch: 0.003}
+  grab:       {weight: 0.20, ref_prefix: GF,   cancel_by_customer: 0.020, cancel_by_branch: 0.010}
+  lineman:    {weight: 0.12, ref_prefix: LM,   cancel_by_customer: 0.025, cancel_by_branch: 0.010}
+  shopeefood: {weight: 0.08, ref_prefix: SPF,  cancel_by_customer: 0.030, cancel_by_branch: 0.015}
+
+basket:
+  # จำนวนบรรทัด (เมนูไม่ซ้ำกัน) ต่อบิล · เฉลี่ย ≈ 1.9
+  lines: {1: 0.45, 2: 0.30, 3: 0.15, 4: 0.10}
+  # จำนวนชิ้นต่อบรรทัด · เฉลี่ย ≈ 1.3 → ≈ 2.5 ชิ้น/บิล, ≈ 100 บาท/บิล
+  quantity: {1: 0.75, 2: 0.20, 3: 0.05}
+
+# ความนิยมของเมนู · ทุก menu_id ใน business.yaml ต้องมีที่นี่ (เมนูใหม่ต้องตั้งค่าเสมอ ไม่มี default)
+menu_weight:
+  B001: 1.0   # นมเนย ตัวขายหลัก
+  B002: 0.8
+  B003: 0.7
+  B004: 0.6
+  B005: 0.5   # แพงสุด
+  D001: 0.5
+  D002: 0.7
+  D003: 0.4
+  D004: 0.4
+  D005: 0.3

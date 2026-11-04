@@ -8,7 +8,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from generator.config import load_config
+from generator.config import load_config, load_simulation
 
 REAL_CONFIG = Path(__file__).parent.parent / "config" / "business.yaml"
 
@@ -165,3 +165,54 @@ def test_day_of_week_must_cover_all_days(raw, tmp_path):
     del raw["seasonality"]["day_of_week"]["sun"]
     with pytest.raises(ValidationError, match="day_of_week missing \\['sun'\\]"):
         load_from(raw, tmp_path)
+
+
+# ---------- simulation.yaml (ADR-004) ----------
+
+REAL_SIMULATION = REAL_CONFIG.parent / "simulation.yaml"
+
+
+@pytest.fixture
+def sim_raw() -> dict:
+    with open(REAL_SIMULATION, encoding="utf-8") as f:
+        return yaml.safe_load(f)
+
+
+def load_sim_from(sim_raw: dict, tmp_path: Path):
+    path = tmp_path / "simulation.yaml"
+    path.write_text(yaml.safe_dump(sim_raw), encoding="utf-8")
+    return load_simulation(path, load_config(REAL_CONFIG))
+
+
+def test_real_simulation_loads():
+    sim = load_simulation(REAL_SIMULATION, load_config(REAL_CONFIG))
+    assert sim.channels["walk_in"].ref_prefix is None
+
+
+def test_menu_without_weight_is_rejected(sim_raw, tmp_path):
+    # เมนูใหม่ใน business.yaml ต้องตั้งความนิยมเสมอ ไม่มี default เงียบๆ
+    del sim_raw["menu_weight"]["B005"]
+    with pytest.raises(ValidationError, match=r"menu_weight missing \['B005'\]"):
+        load_sim_from(sim_raw, tmp_path)
+
+
+def test_unknown_channel_in_simulation(sim_raw, tmp_path):
+    sim_raw["channels"]["foodpanda"] = sim_raw["channels"]["grab"]
+    with pytest.raises(
+        ValidationError, match=r"channels has unknown ids \['foodpanda'\]"
+    ):
+        load_sim_from(sim_raw, tmp_path)
+
+
+def test_cancel_rates_cannot_exceed_one(sim_raw, tmp_path):
+    sim_raw["channels"]["grab"]["cancel_by_customer"] = 0.6
+    sim_raw["channels"]["grab"]["cancel_by_branch"] = 0.5
+    with pytest.raises(ValidationError) as exc:
+        load_sim_from(sim_raw, tmp_path)
+    assert error_locs(exc) == [("channels", "grab")]
+
+
+def test_basket_lines_cannot_exceed_menu_size(sim_raw, tmp_path):
+    sim_raw["basket"]["lines"][11] = 0.01
+    with pytest.raises(ValidationError, match="basket.lines up to 11"):
+        load_sim_from(sim_raw, tmp_path)
